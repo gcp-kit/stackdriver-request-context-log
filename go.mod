@@ -1,6 +1,6 @@
 module github.com/gcp-kit/stalog
 
-go 1.14
+go 1.12
 
 require (
 	github.com/go-chi/chi v4.0.3+incompatible
