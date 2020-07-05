@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/labstack/echo/v4"
 	"go.opencensus.io/exporter/stackdriver/propagation"
 	"go.opencensus.io/trace"
 )
@@ -53,6 +54,39 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 			next.ServeHTTP(wrw, r)
 		}
 		return http.HandlerFunc(fn)
+	}
+}
+
+// RequestLoggingWithEcho creates the middleware which logs a request log and creates a request-context logger
+func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		fn := func(c echo.Context) error {
+			r := c.Request()
+			traceId := getTraceId(r)
+			if traceId == "" {
+				// there is no span yet, so create one
+				var ctx context.Context
+				traceId, ctx = generateTraceId(r)
+				r = r.WithContext(ctx)
+			}
+
+			traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
+
+			contextLogger := &ContextLogger{
+				out:            config.ContextLogOut,
+				Trace:          traces,
+				Severity:       config.Severity,
+				AdditionalData: config.AdditionalData,
+				loggedSeverity: make([]Severity, 0, 10),
+				Skip:           config.Skip,
+			}
+			ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
+
+			r = r.WithContext(ctx)
+			c.SetRequest(r)
+			return next(c)
+		}
+		return fn
 	}
 }
 
