@@ -26,6 +26,8 @@ type Config struct {
 
 	Severity       Severity
 	AdditionalData AdditionalData
+
+	Skip int
 }
 
 // NewConfig creates a config with default settings.
@@ -36,6 +38,7 @@ func NewConfig(projectId string) *Config {
 		RequestLogOut:  os.Stderr,
 		ContextLogOut:  os.Stdout,
 		AdditionalData: AdditionalData{},
+		Skip:           2,
 	}
 }
 
@@ -102,6 +105,7 @@ type ContextLogger struct {
 	Severity       Severity
 	AdditionalData AdditionalData
 	loggedSeverity []Severity
+	Skip           int
 }
 
 // RequestContextLogger gets request-context logger for the request.
@@ -270,7 +274,7 @@ func (l *ContextLogger) write(severity Severity, msg string) error {
 
 	// get source location
 	var location SourceLocation
-	if pc, file, line, ok := runtime.Caller(2); ok {
+	if pc, file, line, ok := runtime.Caller(l.Skip); ok {
 		if function := runtime.FuncForPC(pc); function != nil {
 			location.Function = function.Name()
 		}
