@@ -27,6 +27,7 @@ type Config struct {
 	Severity       Severity
 	AdditionalData AdditionalData
 
+	// nest level for runtime.Caller (default: 2)
 	Skip int
 }
 
