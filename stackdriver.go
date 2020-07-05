@@ -47,15 +47,15 @@ func NewConfig(projectId string) *Config {
 type Severity int
 
 const (
-	SeverityDefault   Severity = 0
-	SeverityDebug     Severity = 100
-	SeverityInfo      Severity = 200
-	SeverityNotice    Severity = 300
-	SeverityWarning   Severity = 400
-	SeverityError     Severity = 500
-	SeverityCritical  Severity = 600
-	SeverityAlert     Severity = 700
-	SeverityEmergency Severity = 800
+	SeverityDefault Severity = iota * 100
+	SeverityDebug
+	SeverityInfo
+	SeverityNotice
+	SeverityWarning
+	SeverityError
+	SeverityCritical
+	SeverityAlert
+	SeverityEmergency
 )
 
 // String returns text representation for the severity
