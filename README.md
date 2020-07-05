@@ -1,12 +1,11 @@
 stackdriver-request-context-log
 ===
-[![CircleCI](https://circleci.com/gh/yfuruyama/stackdriver-request-context-log.svg?style=svg)](https://circleci.com/gh/yfuruyama/stackdriver-request-context-log)
 
 Stackdriver Logging Go library for grouping a request log and application logs.
 
 With this library all application logs in the request are grouped and displayed under the request log (like App Engine).
 
-<img alt="screenshot" src="https://github.com/yfuruyama/stackdriver-request-context-log/blob/master/img/screenshot.png">
+<img alt="screenshot" src="https://github.com/gcp-kit/stalog/blob/master/img/screenshot.png">
 
 Note that the interface of this library is still **ALPHA** level quality.  
 Breaking changes will be introduced frequently.
@@ -14,7 +13,7 @@ Breaking changes will be introduced frequently.
 ## Install
 
 ```
-go get -u github.com/yfuruyama/stackdriver-request-context-log
+go get -u github.com/gcp-kit/stalog
 ```
 
 ## Example
@@ -29,7 +28,7 @@ import (
 	"net/http"
 	"os"
 
-	log "github.com/yfuruyama/stackdriver-request-context-log"
+	log "github.com/gcp-kit/stalog"
 )
 
 func main() {

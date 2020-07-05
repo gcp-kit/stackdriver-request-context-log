@@ -1,4 +1,4 @@
-package stackdriverlog
+package stalog
 
 import (
 	"bytes"

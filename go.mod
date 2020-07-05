@@ -1,4 +1,4 @@
-module github.com/yfuruyama/stackdriver-request-context-log
+module github.com/gcp-kit/stalog
 
 go 1.14
 

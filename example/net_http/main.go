@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	log "github.com/yfuruyama/stackdriver-request-context-log"
+	log "github.com/gcp-kit/stalog"
 )
 
 func main() {

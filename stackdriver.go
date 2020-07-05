@@ -1,5 +1,5 @@
-// Package stackdriverlog provides application logger for Cloud Logging.
-package stackdriverlog
+// Package stalog provides application logger for Cloud Logging.
+package stalog
 
 import (
 	"encoding/json"
