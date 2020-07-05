@@ -26,7 +26,7 @@ func TestIntegration(t *testing.T) {
 		logger.Warnf("3")
 		logger.Errorf("4")
 
-		fmt.Fprintf(w, "OK\n")
+		_, _ = fmt.Fprintf(w, "OK\n")
 	})
 
 	requestLogOut := new(bytes.Buffer)
@@ -84,7 +84,7 @@ func TestIntegration(t *testing.T) {
 	}
 
 	// check context log
-	logs := strings.Split(string(contextLogOut.Bytes()), "\n")
+	logs := strings.Split(contextLogOut.String(), "\n")
 	logs = logs[:len(logs)-1]
 	logExpected := []struct {
 		Severity string
@@ -128,7 +128,7 @@ func TestNoContextLog(t *testing.T) {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "OK\n")
+		_, _ = fmt.Fprintf(w, "OK\n")
 	})
 
 	requestLogOut := new(bytes.Buffer)
@@ -174,6 +174,6 @@ func TestNoContextLog(t *testing.T) {
 	}
 
 	if len(contextLogOut.Bytes()) != 0 {
-		t.Errorf("context log exists: %s", string(contextLogOut.Bytes()))
+		t.Errorf("context log exists: %s", contextLogOut.String())
 	}
 }

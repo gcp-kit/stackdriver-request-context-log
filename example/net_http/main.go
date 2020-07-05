@@ -21,7 +21,7 @@ func main() {
 		logger.Infof("Hello")
 		logger.Warnf("World")
 
-		fmt.Fprintf(w, "OK\n")
+		_, _ = fmt.Fprintf(w, "OK\n")
 	})
 
 	projectId := "my-gcp-project"
