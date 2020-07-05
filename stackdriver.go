@@ -155,7 +155,7 @@ func (l *ContextLogger) Infof(format string, args ...interface{}) {
 	l.write(SeverityInfo, fmt.Sprintf(format, args...))
 }
 
-// Infofln logs a message at INFO severity
+// Infoln logs a message at INFO severity
 func (l *ContextLogger) Infoln(args ...interface{}) {
 	l.write(SeverityInfo, fmt.Sprintln(args...))
 }
