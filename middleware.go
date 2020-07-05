@@ -29,11 +29,11 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 				r = r.WithContext(ctx)
 			}
 
-			trace := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
+			traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
 
 			contextLogger := &ContextLogger{
 				out:            config.ContextLogOut,
-				Trace:          trace,
+				Trace:          traces,
 				Severity:       config.Severity,
 				AdditionalData: config.AdditionalData,
 				loggedSeverity: make([]Severity, 0, 10),
@@ -46,9 +46,9 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 				// logging
 				elapsed := time.Since(before)
 				maxSeverity := contextLogger.maxSeverity()
-				err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, trace, maxSeverity)
+				err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, traces, maxSeverity)
 				if err != nil {
-					fmt.Fprintln(os.Stderr, err.Error())
+					_, _ = fmt.Fprintln(os.Stderr, err.Error())
 				}
 			}()
 			next.ServeHTTP(wrw, r)
