@@ -118,152 +118,152 @@ func RequestContextLogger(r *http.Request) *ContextLogger {
 
 // Default logs a message at DEFAULT severity
 func (l *ContextLogger) Default(args ...interface{}) {
-	l.write(SeverityDefault, fmt.Sprint(args...))
+	_ = l.write(SeverityDefault, fmt.Sprint(args...))
 }
 
 // Defaultf logs a message at DEFAULT severity
 func (l *ContextLogger) Defaultf(format string, args ...interface{}) {
-	l.write(SeverityDefault, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityDefault, fmt.Sprintf(format, args...))
 }
 
 // Defaultln logs a message at DEFAULT severity
 func (l *ContextLogger) Defaultln(args ...interface{}) {
-	l.write(SeverityDefault, fmt.Sprintln(args...))
+	_ = l.write(SeverityDefault, fmt.Sprintln(args...))
 }
 
 // Debug logs a message at DEBUG severity
 func (l *ContextLogger) Debug(args ...interface{}) {
-	l.write(SeverityDebug, fmt.Sprint(args...))
+	_ = l.write(SeverityDebug, fmt.Sprint(args...))
 }
 
 // Debugf logs a message at DEBUG severity
 func (l *ContextLogger) Debugf(format string, args ...interface{}) {
-	l.write(SeverityDebug, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityDebug, fmt.Sprintf(format, args...))
 }
 
 // Debugln logs a message at DEBUG severity
 func (l *ContextLogger) Debugln(args ...interface{}) {
-	l.write(SeverityDebug, fmt.Sprintln(args...))
+	_ = l.write(SeverityDebug, fmt.Sprintln(args...))
 }
 
 // Info logs a message at INFO severity
 func (l *ContextLogger) Info(args ...interface{}) {
-	l.write(SeverityInfo, fmt.Sprint(args...))
+	_ = l.write(SeverityInfo, fmt.Sprint(args...))
 }
 
 // Infof logs a message at INFO severity
 func (l *ContextLogger) Infof(format string, args ...interface{}) {
-	l.write(SeverityInfo, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityInfo, fmt.Sprintf(format, args...))
 }
 
 // Infoln logs a message at INFO severity
 func (l *ContextLogger) Infoln(args ...interface{}) {
-	l.write(SeverityInfo, fmt.Sprintln(args...))
+	_ = l.write(SeverityInfo, fmt.Sprintln(args...))
 }
 
 // Notice logs a message at NOTICE severity
 func (l *ContextLogger) Notice(args ...interface{}) {
-	l.write(SeverityNotice, fmt.Sprint(args...))
+	_ = l.write(SeverityNotice, fmt.Sprint(args...))
 }
 
 // Noticef logs a message at NOTICE severity
 func (l *ContextLogger) Noticef(format string, args ...interface{}) {
-	l.write(SeverityNotice, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityNotice, fmt.Sprintf(format, args...))
 }
 
 // Noticeln logs a message at NOTICE severity
 func (l *ContextLogger) Noticeln(args ...interface{}) {
-	l.write(SeverityNotice, fmt.Sprintln(args...))
+	_ = l.write(SeverityNotice, fmt.Sprintln(args...))
 }
 
 // Warning logs a message at WARNING severity
 func (l *ContextLogger) Warning(args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprint(args...))
+	_ = l.write(SeverityWarning, fmt.Sprint(args...))
 }
 
 // Warningf logs a message at WARNING severity
 func (l *ContextLogger) Warningf(format string, args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityWarning, fmt.Sprintf(format, args...))
 }
 
 // Warningln logs a message at WARNING severity
 func (l *ContextLogger) Warningln(args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprintln(args...))
+	_ = l.write(SeverityWarning, fmt.Sprintln(args...))
 }
 
 // Warn logs a message at WARNING severity
 func (l *ContextLogger) Warn(args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprint(args...))
+	_ = l.write(SeverityWarning, fmt.Sprint(args...))
 }
 
 // Warnf logs a message at WARNING severity
 func (l *ContextLogger) Warnf(format string, args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityWarning, fmt.Sprintf(format, args...))
 }
 
 // Warnln logs a message at WARNING severity
 func (l *ContextLogger) Warnln(args ...interface{}) {
-	l.write(SeverityWarning, fmt.Sprintln(args...))
+	_ = l.write(SeverityWarning, fmt.Sprintln(args...))
 }
 
 // Error logs a message at ERROR severity
 func (l *ContextLogger) Error(args ...interface{}) {
-	l.write(SeverityError, fmt.Sprint(args...))
+	_ = l.write(SeverityError, fmt.Sprint(args...))
 }
 
 // Errorf logs a message at ERROR severity
 func (l *ContextLogger) Errorf(format string, args ...interface{}) {
-	l.write(SeverityError, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityError, fmt.Sprintf(format, args...))
 }
 
 // Errorln logs a message at ERROR severity
 func (l *ContextLogger) Errorln(args ...interface{}) {
-	l.write(SeverityError, fmt.Sprintln(args...))
+	_ = l.write(SeverityError, fmt.Sprintln(args...))
 }
 
 // Critical logs a message at CRITICAL severity
 func (l *ContextLogger) Critical(args ...interface{}) {
-	l.write(SeverityCritical, fmt.Sprint(args...))
+	_ = l.write(SeverityCritical, fmt.Sprint(args...))
 }
 
 // Criticalf logs a message at CRITICAL severity
 func (l *ContextLogger) Criticalf(format string, args ...interface{}) {
-	l.write(SeverityCritical, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityCritical, fmt.Sprintf(format, args...))
 }
 
 // Criticalln logs a message at CRITICAL severity
 func (l *ContextLogger) Criticalln(args ...interface{}) {
-	l.write(SeverityCritical, fmt.Sprintln(args...))
+	_ = l.write(SeverityCritical, fmt.Sprintln(args...))
 }
 
 // Alert logs a message at ALERT severity
 func (l *ContextLogger) Alert(args ...interface{}) {
-	l.write(SeverityAlert, fmt.Sprint(args...))
+	_ = l.write(SeverityAlert, fmt.Sprint(args...))
 }
 
 // Alertf logs a message at ALERT severity
 func (l *ContextLogger) Alertf(format string, args ...interface{}) {
-	l.write(SeverityAlert, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityAlert, fmt.Sprintf(format, args...))
 }
 
 // Alertln logs a message at ALERT severity
 func (l *ContextLogger) Alertln(args ...interface{}) {
-	l.write(SeverityAlert, fmt.Sprintln(args...))
+	_ = l.write(SeverityAlert, fmt.Sprintln(args...))
 }
 
 // Emergency logs a message at EMERGENCY severity
 func (l *ContextLogger) Emergency(args ...interface{}) {
-	l.write(SeverityEmergency, fmt.Sprint(args...))
+	_ = l.write(SeverityEmergency, fmt.Sprint(args...))
 }
 
 // Emergencyf logs a message at EMERGENCY severity
 func (l *ContextLogger) Emergencyf(format string, args ...interface{}) {
-	l.write(SeverityEmergency, fmt.Sprintf(format, args...))
+	_ = l.write(SeverityEmergency, fmt.Sprintf(format, args...))
 }
 
 // Emergencyln logs a message at EMERGENCY severity
 func (l *ContextLogger) Emergencyln(args ...interface{}) {
-	l.write(SeverityEmergency, fmt.Sprintln(args...))
+	_ = l.write(SeverityEmergency, fmt.Sprintln(args...))
 }
 
 func (l *ContextLogger) write(severity Severity, msg string) error {
@@ -295,7 +295,8 @@ func (l *ContextLogger) write(severity Severity, msg string) error {
 
 	logJson, err := json.Marshal(log)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err.Error())
+		_, _ = fmt.Fprintln(os.Stderr, err.Error())
+		return err
 	}
 	logJson = append(logJson, '\n')
 
