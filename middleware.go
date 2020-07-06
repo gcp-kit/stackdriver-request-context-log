@@ -61,6 +61,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		fn := func(c echo.Context) error {
+			before := time.Now()
 			r := c.Request()
 			traceId := getTraceId(r)
 			if traceId == "" {
@@ -84,6 +85,18 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 
 			r = r.WithContext(ctx)
 			c.SetRequest(r)
+
+			w := c.Response().Writer
+			wrw := &wrappedResponseWriter{ResponseWriter: w}
+			defer func() {
+				// logging
+				elapsed := time.Since(before)
+				maxSeverity := contextLogger.maxSeverity()
+				err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, traces, maxSeverity)
+				if err != nil {
+					_, _ = fmt.Fprintln(os.Stderr, err.Error())
+				}
+			}()
 			return next(c)
 		}
 		return fn
