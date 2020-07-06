@@ -90,6 +90,42 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 	}
 }
 
+// SetContext for CloudFunctions
+func SetContext(config *Config, w http.ResponseWriter, r *http.Request) {
+	before := time.Now()
+
+	traceId := getTraceId(r)
+	if traceId == "" {
+		// there is no span yet, so create one
+		var ctx context.Context
+		traceId, ctx = generateTraceId(r)
+		r = r.WithContext(ctx)
+	}
+
+	traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
+
+	contextLogger := &ContextLogger{
+		out:            config.ContextLogOut,
+		Trace:          traces,
+		Severity:       config.Severity,
+		AdditionalData: config.AdditionalData,
+		loggedSeverity: make([]Severity, 0, 10),
+	}
+	ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
+	r = r.WithContext(ctx)
+
+	wrw := &wrappedResponseWriter{ResponseWriter: w}
+	defer func() {
+		// logging
+		elapsed := time.Since(before)
+		maxSeverity := contextLogger.maxSeverity()
+		err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, traces, maxSeverity)
+		if err != nil {
+			_, _ = fmt.Fprintln(os.Stderr, err.Error())
+		}
+	}()
+}
+
 func getTraceId(r *http.Request) string {
 	span := trace.FromContext(r.Context())
 	if span != nil {
