@@ -109,7 +109,7 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 }
 
 // SetContext for CloudFunctions
-func SetContext(config *Config, w http.ResponseWriter, r *http.Request) *http.Request {
+func SetContext(config *Config, w http.ResponseWriter, r *http.Request) (http.ResponseWriter, *http.Request) {
 	before := time.Now()
 
 	traceId := getTraceId(r)
@@ -143,7 +143,8 @@ func SetContext(config *Config, w http.ResponseWriter, r *http.Request) *http.Re
 			_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		}
 	}()
-	return r
+
+	return wrw, r
 }
 
 func getTraceId(r *http.Request) string {
