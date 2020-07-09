@@ -37,6 +37,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 				Severity:       config.Severity,
 				AdditionalData: config.AdditionalData,
 				loggedSeverity: make([]Severity, 0, 10),
+				Skip:           config.Skip,
 			}
 			ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
 			r = r.WithContext(ctx)
@@ -123,6 +124,7 @@ func SetContext(config *Config, w http.ResponseWriter, r *http.Request) *http.Re
 		Severity:       config.Severity,
 		AdditionalData: config.AdditionalData,
 		loggedSeverity: make([]Severity, 0, 10),
+		Skip:           config.Skip,
 	}
 	ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
 	r = r.WithContext(ctx)
