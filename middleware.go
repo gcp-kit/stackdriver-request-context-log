@@ -98,6 +98,10 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 					_, _ = fmt.Fprintln(os.Stderr, err.Error())
 				}
 			}()
+
+			wr := echo.NewResponse(wrw, c.Echo())
+			c.SetResponse(wr)
+
 			return next(c)
 		}
 		return fn
