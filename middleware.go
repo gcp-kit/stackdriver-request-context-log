@@ -19,39 +19,14 @@ import (
 func RequestLogging(config *Config) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		fn := func(w http.ResponseWriter, r *http.Request) {
-			before := time.Now()
-
-			traceId := getTraceId(r)
-			if traceId == "" {
-				// there is no span yet, so create one
-				var ctx context.Context
-				traceId, ctx = generateTraceId(r)
-				r = r.WithContext(ctx)
-			}
-
-			traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
-
-			contextLogger := &ContextLogger{
-				out:            config.ContextLogOut,
-				Trace:          traces,
-				Severity:       config.Severity,
-				AdditionalData: config.AdditionalData,
-				loggedSeverity: make([]Severity, 0, 10),
-				Skip:           config.Skip,
-			}
-			ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
-			r = r.WithContext(ctx)
+			reserve := NewReserve(config, r)
 
 			wrw := &wrappedResponseWriter{ResponseWriter: w}
 			defer func() {
 				// logging
-				elapsed := time.Since(before)
-				maxSeverity := contextLogger.maxSeverity()
-				err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, traces, maxSeverity)
-				if err != nil {
-					_, _ = fmt.Fprintln(os.Stderr, err.Error())
-				}
+				reserve.LastHandling(wrw)
 			}()
+
 			next.ServeHTTP(wrw, r)
 		}
 		return http.HandlerFunc(fn)
@@ -62,44 +37,18 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		fn := func(c echo.Context) error {
-			before := time.Now()
-			r := c.Request()
-			traceId := getTraceId(r)
-			if traceId == "" {
-				// there is no span yet, so create one
-				var ctx context.Context
-				traceId, ctx = generateTraceId(r)
-				r = r.WithContext(ctx)
+			reserve := NewReserve(config, c.Request())
+
+			wrw := &wrappedResponseWriter{
+				ResponseWriter: c.Response().Writer,
 			}
-
-			traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
-
-			contextLogger := &ContextLogger{
-				out:            config.ContextLogOut,
-				Trace:          traces,
-				Severity:       config.Severity,
-				AdditionalData: config.AdditionalData,
-				loggedSeverity: make([]Severity, 0, 10),
-				Skip:           config.Skip,
-			}
-			ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
-
-			r = r.WithContext(ctx)
-			c.SetRequest(r)
-
-			w := c.Response().Writer
-			wrw := &wrappedResponseWriter{ResponseWriter: w}
+			wr := echo.NewResponse(wrw, c.Echo())
 			defer func() {
 				// logging
-				elapsed := time.Since(before)
-				maxSeverity := contextLogger.maxSeverity()
-				err := writeRequestLog(r, config, wrw.status, wrw.responseSize, elapsed, traces, maxSeverity)
-				if err != nil {
-					_, _ = fmt.Fprintln(os.Stderr, err.Error())
-				}
+				reserve.LastHandling(wrw)
 			}()
 
-			wr := echo.NewResponse(wrw, c.Echo())
+			c.SetRequest(reserve.request)
 			c.SetResponse(wr)
 
 			return next(c)
