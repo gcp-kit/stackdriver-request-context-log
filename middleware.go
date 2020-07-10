@@ -147,6 +147,55 @@ func SetContext(config *Config, w http.ResponseWriter, r *http.Request) (http.Re
 	return wrw, r
 }
 
+type Reserve struct {
+	before        time.Time
+	config        *Config
+	contextLogger *ContextLogger
+	request       *http.Request
+	traces        string
+}
+
+func NewReserve(config *Config, r *http.Request) *Reserve {
+	before := time.Now()
+
+	traceId := getTraceId(r)
+	if traceId == "" {
+		// there is no span yet, so create one
+		var ctx context.Context
+		traceId, ctx = generateTraceId(r)
+		r = r.WithContext(ctx)
+	}
+
+	traces := fmt.Sprintf("projects/%s/traces/%s", config.ProjectId, traceId)
+
+	contextLogger := &ContextLogger{
+		out:            config.ContextLogOut,
+		Trace:          traces,
+		Severity:       config.Severity,
+		AdditionalData: config.AdditionalData,
+		loggedSeverity: make([]Severity, 0, 10),
+		Skip:           config.Skip,
+	}
+	ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
+
+	return &Reserve{
+		before:        before,
+		config:        config,
+		contextLogger: contextLogger,
+		request:       r.WithContext(ctx),
+		traces:        traces,
+	}
+}
+
+func (rv *Reserve) LastHandling(wrw *wrappedResponseWriter) {
+	elapsed := time.Since(rv.before)
+	maxSeverity := rv.contextLogger.maxSeverity()
+	err := writeRequestLog(rv.request, rv.config, wrw.status, wrw.responseSize, elapsed, rv.traces, maxSeverity)
+	if err != nil {
+		_, _ = fmt.Fprintln(os.Stderr, err.Error())
+	}
+}
+
 func getTraceId(r *http.Request) string {
 	span := trace.FromContext(r.Context())
 	if span != nil {
