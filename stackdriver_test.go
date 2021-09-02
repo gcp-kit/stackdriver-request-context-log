@@ -44,23 +44,23 @@ func TestIntegration(t *testing.T) {
 	handler.ServeHTTP(w, r)
 
 	// check request log
-	var httpRequestLog HttpRequestLog
+	var httpRequestLog HTTPRequestLog
 	err := json.Unmarshal(requestLogOut.Bytes(), &httpRequestLog)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	opts := []cmp.Option{
-		cmpopts.IgnoreFields(HttpRequestLog{}, "Time", "Trace"),
-		cmpopts.IgnoreFields(HttpRequest{}, "RemoteIp", "ServerIp", "Latency"),
+		cmpopts.IgnoreFields(HTTPRequestLog{}, "Time", "Trace"),
+		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIp", "ServerIp", "Latency"),
 	}
-	expected := HttpRequestLog{
+	expected := HTTPRequestLog{
 		Severity: "ERROR",
 		AdditionalData: AdditionalData{
 			"service": "foo",
 			"version": 1.0,
 		},
-		HttpRequest: HttpRequest{
+		HTTPRequest: HTTPRequest{
 			RequestMethod:                  "GET",
 			RequestUrl:                     "/foo?bar=baz",
 			RequestSize:                    "0",
@@ -79,8 +79,8 @@ func TestIntegration(t *testing.T) {
 		t.Errorf("diff: %s", cmp.Diff(httpRequestLog, expected, opts...))
 	}
 
-	if !strings.HasSuffix(httpRequestLog.HttpRequest.Latency, "s") {
-		t.Errorf("invalid latency: %s", httpRequestLog.HttpRequest.Latency)
+	if !strings.HasSuffix(httpRequestLog.HTTPRequest.Latency, "s") {
+		t.Errorf("invalid latency: %s", httpRequestLog.HTTPRequest.Latency)
 	}
 
 	// check context log
@@ -141,20 +141,20 @@ func TestNoContextLog(t *testing.T) {
 	handler.ServeHTTP(w, r)
 
 	// check request log
-	var httpRequestLog HttpRequestLog
+	var httpRequestLog HTTPRequestLog
 	err := json.Unmarshal(requestLogOut.Bytes(), &httpRequestLog)
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	opts := []cmp.Option{
-		cmpopts.IgnoreFields(HttpRequestLog{}, "Time", "Trace"),
-		cmpopts.IgnoreFields(HttpRequest{}, "RemoteIp", "ServerIp", "Latency"),
+		cmpopts.IgnoreFields(HTTPRequestLog{}, "Time", "Trace"),
+		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIp", "ServerIp", "Latency"),
 	}
-	expected := HttpRequestLog{
+	expected := HTTPRequestLog{
 		Severity:       "DEFAULT",
 		AdditionalData: nil,
-		HttpRequest: HttpRequest{
+		HTTPRequest: HTTPRequest{
 			RequestMethod:                  "GET",
 			RequestUrl:                     "/foo?bar=baz",
 			RequestSize:                    "0",

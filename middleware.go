@@ -159,7 +159,7 @@ func (w *wrappedResponseWriter) Write(b []byte) (int, error) {
 	return n, err
 }
 
-type HttpRequest struct {
+type HTTPRequest struct {
 	RequestMethod                  string `json:"requestMethod"`
 	RequestUrl                     string `json:"requestUrl"`
 	RequestSize                    string `json:"requestSize"`
@@ -176,20 +176,20 @@ type HttpRequest struct {
 	Protocol                       string `json:"protocol"`
 }
 
-type HttpRequestLog struct {
+type HTTPRequestLog struct {
 	Time           string         `json:"time"`
 	Trace          string         `json:"logging.googleapis.com/trace"`
 	Severity       string         `json:"severity"`
-	HttpRequest    HttpRequest    `json:"httpRequest"`
+	HTTPRequest    HTTPRequest    `json:"httpRequest"`
 	AdditionalData AdditionalData `json:"data,omitempty"`
 }
 
 func writeRequestLog(r *http.Request, config *Config, status int, responseSize int, elapsed time.Duration, trace string, severity Severity) error {
-	requestLog := &HttpRequestLog{
+	requestLog := &HTTPRequestLog{
 		Time:     time.Now().Format(time.RFC3339Nano),
 		Trace:    trace,
 		Severity: severity.String(),
-		HttpRequest: HttpRequest{
+		HTTPRequest: HTTPRequest{
 			RequestMethod:                  r.Method,
 			RequestUrl:                     r.URL.RequestURI(),
 			RequestSize:                    fmt.Sprintf("%d", r.ContentLength),
