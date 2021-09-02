@@ -99,7 +99,7 @@ func NewReserve(config *Config, r *http.Request) *Reserve {
 		loggedSeverity: make([]Severity, 0, 10),
 		Skip:           config.Skip,
 	}
-	ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
+	ctx := context.WithValue(r.Context(), ContextLoggerKey, contextLogger)
 
 	return &Reserve{
 		before:        before,

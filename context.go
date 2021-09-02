@@ -2,6 +2,4 @@ package stalog
 
 type contextKey struct{}
 
-var (
-	contextLoggerKey = &contextKey{}
-)
+var ContextLoggerKey = &contextKey{}

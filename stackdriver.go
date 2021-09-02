@@ -112,7 +112,7 @@ type ContextLogger struct {
 // RequestContextLogger gets request-context logger for the request.
 // You must use `RequestLogging` middleware in advance for this function to work.
 func RequestContextLogger(r *http.Request) *ContextLogger {
-	v, _ := r.Context().Value(contextLoggerKey).(*ContextLogger)
+	v, _ := r.Context().Value(ContextLoggerKey).(*ContextLogger)
 	return v
 }
 
