@@ -27,8 +27,9 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 				reserve.LastHandling(wrw)
 			}()
 
-			next.ServeHTTP(wrw, r)
+			next.ServeHTTP(wrw, reserve.request)
 		}
+
 		return http.HandlerFunc(fn)
 	}
 }
@@ -36,7 +37,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 // RequestLoggingWithEcho creates the middleware which logs a request log and creates a request-context logger
 func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		fn := func(c echo.Context) error {
+		return func(c echo.Context) error {
 			reserve := NewReserve(config, c.Request())
 
 			wrw := &wrappedResponseWriter{
@@ -53,7 +54,6 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 
 			return next(c)
 		}
-		return fn
 	}
 }
 
@@ -99,7 +99,7 @@ func NewReserve(config *Config, r *http.Request) *Reserve {
 		loggedSeverity: make([]Severity, 0, 10),
 		Skip:           config.Skip,
 	}
-	ctx := context.WithValue(r.Context(), contextLoggerKey, contextLogger)
+	ctx := context.WithValue(r.Context(), ContextLoggerKey, contextLogger)
 
 	return &Reserve{
 		before:        before,
@@ -159,15 +159,15 @@ func (w *wrappedResponseWriter) Write(b []byte) (int, error) {
 	return n, err
 }
 
-type HttpRequest struct {
+type HTTPRequest struct {
 	RequestMethod                  string `json:"requestMethod"`
 	RequestUrl                     string `json:"requestUrl"`
 	RequestSize                    string `json:"requestSize"`
 	Status                         int    `json:"status"`
 	ResponseSize                   string `json:"responseSize"`
 	UserAgent                      string `json:"userAgent"`
-	RemoteIp                       string `json:"remoteIp"`
-	ServerIp                       string `json:"serverIp"`
+	RemoteIP                       string `json:"remoteIp"`
+	ServerIP                       string `json:"serverIp"`
 	Referer                        string `json:"referer"`
 	Latency                        string `json:"latency"`
 	CacheLookup                    bool   `json:"cacheLookup"`
@@ -176,28 +176,28 @@ type HttpRequest struct {
 	Protocol                       string `json:"protocol"`
 }
 
-type HttpRequestLog struct {
+type HTTPRequestLog struct {
 	Time           string         `json:"time"`
 	Trace          string         `json:"logging.googleapis.com/trace"`
 	Severity       string         `json:"severity"`
-	HttpRequest    HttpRequest    `json:"httpRequest"`
+	HTTPRequest    HTTPRequest    `json:"httpRequest"`
 	AdditionalData AdditionalData `json:"data,omitempty"`
 }
 
 func writeRequestLog(r *http.Request, config *Config, status int, responseSize int, elapsed time.Duration, trace string, severity Severity) error {
-	requestLog := &HttpRequestLog{
+	requestLog := &HTTPRequestLog{
 		Time:     time.Now().Format(time.RFC3339Nano),
 		Trace:    trace,
 		Severity: severity.String(),
-		HttpRequest: HttpRequest{
+		HTTPRequest: HTTPRequest{
 			RequestMethod:                  r.Method,
 			RequestUrl:                     r.URL.RequestURI(),
 			RequestSize:                    fmt.Sprintf("%d", r.ContentLength),
 			Status:                         status,
 			ResponseSize:                   fmt.Sprintf("%d", responseSize),
 			UserAgent:                      r.UserAgent(),
-			RemoteIp:                       getRemoteIp(r),
-			ServerIp:                       getServerIp(),
+			RemoteIP:                       getRemoteIP(r),
+			ServerIP:                       getServerIP(),
 			Referer:                        r.Referer(),
 			Latency:                        fmt.Sprintf("%fs", elapsed.Seconds()),
 			CacheLookup:                    false,
@@ -207,31 +207,36 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 		},
 		AdditionalData: config.AdditionalData,
 	}
-	requestLogJson, err := json.Marshal(requestLog)
+
+	jsonByte, err := json.Marshal(requestLog)
 	if err != nil {
 		return err
 	}
-	requestLogJson = append(requestLogJson, '\n')
 
-	_, err = config.RequestLogOut.Write(requestLogJson)
+	// append \n
+	jsonByte = append(jsonByte, 0xa)
+
+	_, err = config.RequestLogOut.Write(jsonByte)
 	return err
 }
 
-func getRemoteIp(r *http.Request) string {
+func getRemoteIP(r *http.Request) string {
 	parts := strings.Split(r.RemoteAddr, ":")
 	return parts[0]
 }
 
-func getServerIp() string {
+func getServerIP() string {
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		return ""
 	}
+
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
 		if err != nil {
 			return ""
 		}
+
 		for _, addr := range addrs {
 			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 				if ipnet.IP.To4() != nil {
@@ -240,5 +245,6 @@ func getServerIp() string {
 			}
 		}
 	}
+
 	return ""
 }

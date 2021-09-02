@@ -80,8 +80,9 @@ func (s Severity) String() string {
 		return "ALERT"
 	case SeverityEmergency:
 		return "EMERGENCY"
+	default:
+		return "UNKNOWN"
 	}
-	return "UNKNOWN"
 }
 
 type SourceLocation struct {
@@ -112,7 +113,7 @@ type ContextLogger struct {
 // RequestContextLogger gets request-context logger for the request.
 // You must use `RequestLogging` middleware in advance for this function to work.
 func RequestContextLogger(r *http.Request) *ContextLogger {
-	v, _ := r.Context().Value(contextLoggerKey).(*ContextLogger)
+	v, _ := r.Context().Value(ContextLoggerKey).(*ContextLogger)
 	return v
 }
 
@@ -293,14 +294,16 @@ func (l *ContextLogger) write(severity Severity, msg string) error {
 		AdditionalData: l.AdditionalData,
 	}
 
-	logJson, err := json.Marshal(log)
+	jsonByte, err := json.Marshal(log)
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		return err
 	}
-	logJson = append(logJson, '\n')
 
-	_, err = l.out.Write(logJson)
+	// append \n
+	jsonByte = append(jsonByte, 0xa)
+
+	_, err = l.out.Write(jsonByte)
 	return err
 }
 
@@ -311,5 +314,6 @@ func (l *ContextLogger) maxSeverity() Severity {
 			max = s
 		}
 	}
+
 	return max
 }
