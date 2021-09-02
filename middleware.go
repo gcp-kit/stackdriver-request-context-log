@@ -29,6 +29,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 
 			next.ServeHTTP(wrw, r)
 		}
+
 		return http.HandlerFunc(fn)
 	}
 }
@@ -53,6 +54,7 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 
 			return next(c)
 		}
+
 		return fn
 	}
 }
@@ -207,10 +209,12 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 		},
 		AdditionalData: config.AdditionalData,
 	}
+
 	requestLogJson, err := json.Marshal(requestLog)
 	if err != nil {
 		return err
 	}
+
 	requestLogJson = append(requestLogJson, '\n')
 
 	_, err = config.RequestLogOut.Write(requestLogJson)
@@ -227,11 +231,13 @@ func getServerIp() string {
 	if err != nil {
 		return ""
 	}
+
 	for _, i := range ifaces {
 		addrs, err := i.Addrs()
 		if err != nil {
 			return ""
 		}
+
 		for _, addr := range addrs {
 			if ipnet, ok := addr.(*net.IPNet); ok && !ipnet.IP.IsLoopback() {
 				if ipnet.IP.To4() != nil {
@@ -240,5 +246,6 @@ func getServerIp() string {
 			}
 		}
 	}
+
 	return ""
 }

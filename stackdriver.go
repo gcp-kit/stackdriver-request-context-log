@@ -311,5 +311,6 @@ func (l *ContextLogger) maxSeverity() Severity {
 			max = s
 		}
 	}
+
 	return max
 }
