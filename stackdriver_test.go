@@ -52,7 +52,7 @@ func TestIntegration(t *testing.T) {
 
 	opts := []cmp.Option{
 		cmpopts.IgnoreFields(HTTPRequestLog{}, "Time", "Trace"),
-		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIp", "ServerIp", "Latency"),
+		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIP", "ServerIP", "Latency"),
 	}
 	expected := HTTPRequestLog{
 		Severity: "ERROR",
@@ -149,7 +149,7 @@ func TestNoContextLog(t *testing.T) {
 
 	opts := []cmp.Option{
 		cmpopts.IgnoreFields(HTTPRequestLog{}, "Time", "Trace"),
-		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIp", "ServerIp", "Latency"),
+		cmpopts.IgnoreFields(HTTPRequest{}, "RemoteIP", "ServerIP", "Latency"),
 	}
 	expected := HTTPRequestLog{
 		Severity:       "DEFAULT",

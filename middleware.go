@@ -166,8 +166,8 @@ type HTTPRequest struct {
 	Status                         int    `json:"status"`
 	ResponseSize                   string `json:"responseSize"`
 	UserAgent                      string `json:"userAgent"`
-	RemoteIp                       string `json:"remoteIp"`
-	ServerIp                       string `json:"serverIp"`
+	RemoteIP                       string `json:"remoteIp"`
+	ServerIP                       string `json:"serverIp"`
 	Referer                        string `json:"referer"`
 	Latency                        string `json:"latency"`
 	CacheLookup                    bool   `json:"cacheLookup"`
@@ -196,8 +196,8 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 			Status:                         status,
 			ResponseSize:                   fmt.Sprintf("%d", responseSize),
 			UserAgent:                      r.UserAgent(),
-			RemoteIp:                       getRemoteIp(r),
-			ServerIp:                       getServerIp(),
+			RemoteIP:                       getRemoteIP(r),
+			ServerIP:                       getServerIP(),
 			Referer:                        r.Referer(),
 			Latency:                        fmt.Sprintf("%fs", elapsed.Seconds()),
 			CacheLookup:                    false,
@@ -220,12 +220,12 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 	return err
 }
 
-func getRemoteIp(r *http.Request) string {
+func getRemoteIP(r *http.Request) string {
 	parts := strings.Split(r.RemoteAddr, ":")
 	return parts[0]
 }
 
-func getServerIp() string {
+func getServerIP() string {
 	ifaces, err := net.Interfaces()
 	if err != nil {
 		return ""
