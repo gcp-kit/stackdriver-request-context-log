@@ -27,7 +27,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 				reserve.LastHandling(wrw)
 			}()
 
-			next.ServeHTTP(wrw, r)
+			next.ServeHTTP(wrw, reserve.request)
 		}
 
 		return http.HandlerFunc(fn)
