@@ -37,7 +37,7 @@ func RequestLogging(config *Config) func(http.Handler) http.Handler {
 // RequestLoggingWithEcho creates the middleware which logs a request log and creates a request-context logger
 func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
-		fn := func(c echo.Context) error {
+		return func(c echo.Context) error {
 			reserve := NewReserve(config, c.Request())
 
 			wrw := &wrappedResponseWriter{
@@ -54,8 +54,6 @@ func RequestLoggingWithEcho(config *Config) echo.MiddlewareFunc {
 
 			return next(c)
 		}
-
-		return fn
 	}
 }
 
