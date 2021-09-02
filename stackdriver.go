@@ -80,8 +80,9 @@ func (s Severity) String() string {
 		return "ALERT"
 	case SeverityEmergency:
 		return "EMERGENCY"
+	default:
+		return "UNKNOWN"
 	}
-	return "UNKNOWN"
 }
 
 type SourceLocation struct {
