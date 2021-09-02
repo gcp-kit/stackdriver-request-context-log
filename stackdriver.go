@@ -299,7 +299,9 @@ func (l *ContextLogger) write(severity Severity, msg string) error {
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		return err
 	}
-	logJson = append(logJson, '\n')
+
+	// append \n
+	logJson = append(logJson, 0xa)
 
 	_, err = l.out.Write(logJson)
 	return err

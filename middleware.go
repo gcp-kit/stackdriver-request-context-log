@@ -215,7 +215,8 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 		return err
 	}
 
-	requestLogJson = append(requestLogJson, '\n')
+	// append \n
+	requestLogJson = append(requestLogJson, 0xa)
 
 	_, err = config.RequestLogOut.Write(requestLogJson)
 	return err
