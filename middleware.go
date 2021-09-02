@@ -210,15 +210,15 @@ func writeRequestLog(r *http.Request, config *Config, status int, responseSize i
 		AdditionalData: config.AdditionalData,
 	}
 
-	requestLogJson, err := json.Marshal(requestLog)
+	jsonByte, err := json.Marshal(requestLog)
 	if err != nil {
 		return err
 	}
 
 	// append \n
-	requestLogJson = append(requestLogJson, 0xa)
+	jsonByte = append(jsonByte, 0xa)
 
-	_, err = config.RequestLogOut.Write(requestLogJson)
+	_, err = config.RequestLogOut.Write(jsonByte)
 	return err
 }
 

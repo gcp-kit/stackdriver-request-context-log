@@ -294,16 +294,16 @@ func (l *ContextLogger) write(severity Severity, msg string) error {
 		AdditionalData: l.AdditionalData,
 	}
 
-	logJson, err := json.Marshal(log)
+	jsonByte, err := json.Marshal(log)
 	if err != nil {
 		_, _ = fmt.Fprintln(os.Stderr, err.Error())
 		return err
 	}
 
 	// append \n
-	logJson = append(logJson, 0xa)
+	jsonByte = append(jsonByte, 0xa)
 
-	_, err = l.out.Write(logJson)
+	_, err = l.out.Write(jsonByte)
 	return err
 }
 
